@@ -11,39 +11,87 @@ const dbConfig = {
 };
 
 async function mainMenu() {
-  try {
-    const connection = await mysql.createConnection(dbConfig);
-    console.log('Connected to the MySQL server.');
+  const connection = await mysql.createConnection(dbConfig);
+  console.log('Connected to the MySQL server.');
 
-    // Main menu logic using inquirer
-    // Example of menu item handling
-    const { action } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'action',
-        message: 'What would you like to do?',
-        choices: [
-          'View All Departments',
-          // ... other choices
-          'Exit'
-        ]
-      }
-    ]);
+  let exit = false;
+  while (!exit) {
+    const { action } = await inquirer.prompt({
+      type: 'list',
+      name: 'action',
+      message: 'What would you like to do?',
+      choices: [
+        'View All Departments',
+        'View All Roles',
+        'View All Employees',
+        'Add a Department',
+        'Add a Role',
+        'Add an Employee',
+        'Update an Employee Role',
+        'Exit'
+      ]
+    });
 
     switch (action) {
       case 'View All Departments':
-        // Function to view all departments
+        await viewAllDepartments(connection);
         break;
-      // ... handle other cases
+      case 'View All Roles':
+        await viewAllRoles(connection);
+        break;
+      case 'View All Employees':
+        await viewAllEmployees(connection);
+        break;
+      case 'Add a Department':
+        await addDepartment(connection);
+        break;
+      case 'Add a Role':
+        await addRole(connection);
+        break;
+      case 'Add an Employee':
+        await addEmployee(connection);
+        break;
+      case 'Update an Employee Role':
+        await updateEmployeeRole(connection);
+        break;
       case 'Exit':
         console.log('Exiting application.');
-        connection.end();
+        exit = true;
         break;
     }
-  } catch (error) {
-    console.error('Error:', error);
-    process.exit(1);
   }
+
+  connection.end();
+}
+
+async function viewAllDepartments(connection) {
+  const query = 'SELECT * FROM department';
+  const [departments] = await connection.query(query);
+  console.table(departments);
+}
+
+async function viewAllRoles(connection) {
+  // ... Implement viewAllRoles function
+}
+
+async function viewAllEmployees(connection) {
+  // ... Implement viewAllEmployees function
+}
+
+async function addDepartment(connection) {
+  // ... Implement addDepartment function
+}
+
+async function addRole(connection) {
+  // ... Implement addRole function
+}
+
+async function addEmployee(connection) {
+  // ... Implement addEmployee function
+}
+
+async function updateEmployeeRole(connection) {
+  // ... Implement updateEmployeeRole function
 }
 
 mainMenu();
