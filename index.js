@@ -88,7 +88,7 @@ function listAllDepartments() {
 }
 
 function addNewEmployee() {
-    // Retrieve roles and managers for selection
+    // Retrieve roles for selection
     db.promise().query('SELECT id, title FROM role')
       .then(([roles]) => {
         return Promise.all([
@@ -97,6 +97,9 @@ function addNewEmployee() {
         ]);
       })
       .then(([roles, [managers]]) => {
+        // Adding 'None' option for manager
+        managers.push({ id: null, name: 'None' });
+  
         return inquirer.prompt([
           {
             type: 'input',
@@ -124,7 +127,7 @@ function addNewEmployee() {
       })
       .then(answer => {
         const query = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
-        db.query(query, [answer.firstName, answer.lastName, answer.roleId, answer.managerId], (err) => {
+        db.query(query, [answer.firstName, answer.lastName, answer.roleId, answer.managerId || null], (err) => {
           if (err) throw err;
           console.log('Employee added successfully.');
           startApp();
