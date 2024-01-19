@@ -1,6 +1,7 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
+// create a connection to the mysql database
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -8,6 +9,7 @@ const db = mysql.createConnection({
     database: 'company_db'
 });
 
+// Function to start the application and display the main menu
 function startApp() {
     inquirer.prompt({
         type: 'list',
@@ -25,6 +27,7 @@ function startApp() {
         ]
     })
     .then(answer => {
+        // Handle the user's choice
         switch (answer.option) {
             case 'List All Employees':
                 listAllEmployees();
@@ -54,6 +57,7 @@ function startApp() {
     });
 }
 
+// Function to list all employees
 function listAllEmployees() {
     const query = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
                    FROM employee 
@@ -87,6 +91,7 @@ function listAllDepartments() {
     });
 }
 
+// Function to add a new employee
 function addNewEmployee() {
     // Retrieve roles for selection
     db.promise().query('SELECT id, title FROM role')
@@ -135,6 +140,8 @@ function addNewEmployee() {
       });
   }
   
+
+  // function to create a new role
   function createNewRole() {
     db.query('SELECT id, name FROM department', (err, departments) => {
       if (err) throw err;
@@ -167,6 +174,7 @@ function addNewEmployee() {
     });
   }
   
+  // Function to create a new department
   function createNewDepartment() {
     inquirer.prompt({
       type: 'input',
@@ -183,6 +191,7 @@ function addNewEmployee() {
     });
   }
   
+  // Function to update an employee's role
   function updateEmployeeRole() {
     // Retrieve employees and roles for selection
     db.promise().query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee')
@@ -218,6 +227,7 @@ function addNewEmployee() {
       });
   }
 
+  // connect to the databse adn start the application
 db.connect(err => {
     if (err) throw err;
     console.log('Connected to the company_db database.');
